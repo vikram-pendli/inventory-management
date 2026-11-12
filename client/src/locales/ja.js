@@ -6,6 +6,8 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '補充発注',
+    reports: 'レポート',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -126,6 +128,38 @@ export default {
       status: 'ステータス',
       expectedDelivery: '予定配達日',
       actualDelivery: '実際の配達日'
+    },
+    submittedOrders: '発注済み注文',
+    noSubmittedOrders: '補充発注はまだありません',
+    leadTime: 'リードタイム',
+    leadTimeDays: '{days}日',
+    submittedOn: '発注日'
+  },
+
+  restocking: {
+    title: '補充発注',
+    description: '予算を設定し、需要予測に基づいて品目を補充します',
+    budget: '利用可能な予算',
+    budgetUsed: '使用予算',
+    budgetRemaining: '残り予算',
+    itemsRecommended: '推奨品目数',
+    leadTime: '予想リードタイム',
+    recommendedItems: '推奨品目',
+    noRecommendations: 'この予算で補充する品目はありません',
+    placeOrder: '発注する',
+    placingOrder: '発注中...',
+    orderPlaced: '注文 {orderNumber} を発注しました。{days}日後に納品予定です。',
+    orderFailed: '発注に失敗しました。もう一度お試しください。',
+    table: {
+      sku: 'SKU',
+      item: '品目',
+      trend: 'トレンド',
+      onHand: '在庫数',
+      forecast: '予測',
+      shortfall: '不足数',
+      orderQty: '発注数量',
+      unitCost: '単価',
+      lineTotal: '小計'
     }
   },
 
@@ -206,7 +240,8 @@ export default {
     backordered: 'バックオーダー',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
-    adequate: '適量'
+    adequate: '適量',
+    submitted: '発注済み'
   },
 
   // Trends
@@ -245,6 +280,38 @@ export default {
     sanFrancisco: 'サンフランシスコ',
     london: 'ロンドン',
     tokyo: '東京'
+  },
+
+  reports: {
+    title: 'パフォーマンスレポート',
+    description: '四半期の業績指標と月次トレンドを表示します',
+    loading: 'レポートを読み込み中...',
+    loadFailed: 'レポートの読み込みに失敗しました',
+    empty: '現在のフィルターに一致する注文はありません',
+    quarterlyPerformance: '四半期パフォーマンス',
+    monthlyRevenueTrend: '月次売上トレンド',
+    monthOverMonth: '前月比分析',
+    quarterLabel: '{year}年第{quarter}四半期',
+    monthLabel: '{year}年{month}',
+    notAvailable: '該当なし',
+    table: {
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総売上',
+      avgOrderValue: '平均注文額',
+      fulfillmentRate: '充足率',
+      month: '月',
+      orders: '注文数',
+      revenue: '売上',
+      change: '増減',
+      growthRate: '成長率'
+    },
+    stats: {
+      totalRevenue: '総売上',
+      avgMonthlyRevenue: '月平均売上',
+      totalOrders: '総注文数',
+      bestQuarter: '最高業績の四半期'
+    }
   },
 
   // Months

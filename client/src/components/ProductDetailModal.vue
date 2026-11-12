@@ -62,7 +62,7 @@
 
               <div class="info-item">
                 <div class="info-label">First Order Date</div>
-                <div class="info-value">{{ formatDate(product.firstOrderDate) }}</div>
+                <div class="info-value">{{ formatDate(product.firstOrderDate, 'long') }}</div>
               </div>
 
               <div class="info-item">
@@ -88,6 +88,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { formatDate } from '../utils/format'
 
 const { currentCurrency } = useI18n()
 
@@ -110,16 +111,6 @@ const emit = defineEmits(['close'])
 
 const close = () => {
   emit('close')
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
 }
 
 const getStockBadgeClass = (stockLevel) => {
