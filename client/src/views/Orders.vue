@@ -74,6 +74,54 @@
           </table>
         </div>
       </div>
+
+      <div class="card submitted-card">
+        <div class="card-header">
+          <h3 class="card-title">{{ t('orders.submittedOrders') }} ({{ restockingOrders.length }})</h3>
+        </div>
+        <div v-if="restockingError" class="error">{{ restockingError }}</div>
+        <div v-else-if="restockingOrders.length === 0" class="empty-state">{{ t('orders.noSubmittedOrders') }}</div>
+        <div v-else class="table-container">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th class="col-order-number">{{ t('orders.table.orderNumber') }}</th>
+                <th class="col-items">{{ t('orders.table.items') }}</th>
+                <th class="col-value">{{ t('orders.table.totalValue') }}</th>
+                <th class="col-status">{{ t('orders.table.status') }}</th>
+                <th class="col-date">{{ t('orders.submittedOn') }}</th>
+                <th class="col-lead">{{ t('orders.leadTime') }}</th>
+                <th class="col-date">{{ t('orders.table.expectedDelivery') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in restockingOrders" :key="order.id">
+                <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+                <td class="col-items">
+                  <details class="items-details">
+                    <summary class="items-summary">
+                      {{ t('orders.itemsCount', { count: order.lines.length }) }}
+                    </summary>
+                    <div class="items-dropdown">
+                      <div v-for="line in order.lines" :key="line.sku" class="item-entry">
+                        <span class="item-name">{{ line.sku }} - {{ translateProductName(line.name) }}</span>
+                        <span class="item-meta">{{ t('orders.quantity') }}: {{ line.quantity }}</span>
+                      </div>
+                    </div>
+                  </details>
+                </td>
+                <td class="col-value"><strong>{{ currencySymbol }}{{ formatCost(order.total_cost) }}</strong></td>
+                <td class="col-status">
+                  <span class="badge info">{{ translateStatus(order.status) }}</span>
+                </td>
+                <td class="col-date">{{ formatDate(order.created_date) }}</td>
+                <td class="col-lead">{{ t('orders.leadTimeDays', { days: order.lead_time_days }) }}</td>
+                <td class="col-date">{{ formatDate(order.expected_delivery_date) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -95,6 +143,8 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+    const restockingOrders = ref([])
+    const restockingError = ref(null)
 
     // Use shared filters
     const {
@@ -124,6 +174,21 @@ export default {
       }
     }
 
+    // Separate from the main fetch so a failure here does not break the orders table
+    let restockingRequestId = 0
+    const loadRestockingOrders = async () => {
+      const requestId = ++restockingRequestId
+      try {
+        const result = await api.getRestockingOrders()
+        if (requestId !== restockingRequestId) return
+        restockingError.value = null
+        restockingOrders.value = result
+      } catch (err) {
+        if (requestId !== restockingRequestId) return
+        restockingError.value = 'Failed to load submitted orders: ' + err.message
+      }
+    }
+
     // Watch for filter changes and reload data
     watch([selectedPeriod, selectedLocation, selectedCategory, selectedStatus], () => {
       loadOrders()
@@ -146,23 +211,46 @@ export default {
     const formatDate = (dateString) => {
       const { currentLocale } = useI18n()
       const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-      return new Date(dateString).toLocaleDateString(locale, {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return '-'
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
       })
     }
 
-    onMounted(loadOrders)
+    const formatCost = (value) => {
+      const num = Number(value)
+      if (!Number.isFinite(num)) return '-'
+      return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    }
+
+    // t() returns the key itself when missing; fall back to the raw status
+    const translateStatus = (status) => {
+      if (!status) return '-'
+      const key = `status.${String(status).toLowerCase()}`
+      const label = t(key)
+      return label && label !== key ? label : status
+    }
+
+    onMounted(() => {
+      loadOrders()
+      loadRestockingOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      restockingOrders,
+      restockingError,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
+      formatCost,
+      translateStatus,
       currencySymbol,
       translateProductName,
       translateCustomerName
@@ -201,6 +289,20 @@ export default {
 
 .col-value {
   width: 120px;
+}
+
+.col-lead {
+  width: 100px;
+}
+
+.submitted-card {
+  margin-top: 1.5rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
 }
 
 /* Items details styling */

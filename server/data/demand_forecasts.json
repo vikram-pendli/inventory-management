@@ -6,7 +6,10 @@
     "current_demand": 300,
     "forecasted_demand": 450,
     "trend": "increasing",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 120,
+    "unit_cost": 420.0
   },
   {
     "id": "2",
@@ -15,7 +18,10 @@
     "current_demand": 150,
     "forecasted_demand": 152,
     "trend": "stable",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 160,
+    "unit_cost": 95.0
   },
   {
     "id": "3",
@@ -24,7 +30,10 @@
     "current_demand": 500,
     "forecasted_demand": 600,
     "trend": "increasing",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 210,
+    "unit_cost": 65.0
   },
   {
     "id": "4",
@@ -33,7 +42,10 @@
     "current_demand": 50,
     "forecasted_demand": 35,
     "trend": "decreasing",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 40,
+    "unit_cost": 780.0
   },
   {
     "id": "5",
@@ -42,7 +54,10 @@
     "current_demand": 800,
     "forecasted_demand": 950,
     "trend": "increasing",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 300,
+    "unit_cost": 118.0
   },
   {
     "id": "6",
@@ -51,7 +66,10 @@
     "current_demand": 120,
     "forecasted_demand": 121,
     "trend": "stable",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Actuators",
+    "quantity_on_hand": 60,
+    "unit_cost": 340.0
   },
   {
     "id": "7",
@@ -60,7 +78,10 @@
     "current_demand": 250,
     "forecasted_demand": 252,
     "trend": "stable",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Power Supplies",
+    "quantity_on_hand": 420,
+    "unit_cost": 18.99
   },
   {
     "id": "8",
@@ -69,7 +90,10 @@
     "current_demand": 180,
     "forecasted_demand": 182,
     "trend": "stable",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Sensors",
+    "quantity_on_hand": 90,
+    "unit_cost": 215.0
   },
   {
     "id": "9",
@@ -78,6 +102,9 @@
     "current_demand": 95,
     "forecasted_demand": 96,
     "trend": "stable",
-    "period": "Next 30 days"
+    "period": "Next 30 days",
+    "category": "Controllers",
+    "quantity_on_hand": 30,
+    "unit_cost": 640.0
   }
 ]
