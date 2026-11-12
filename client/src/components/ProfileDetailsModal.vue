@@ -45,7 +45,7 @@
 
                 <div class="info-item">
                   <div class="info-label">{{ t('profileDetails.joinDate') }}</div>
-                  <div class="info-value">{{ formatDate(currentUser.joinDate) }}</div>
+                  <div class="info-value">{{ formatDate(currentUser.joinDate, 'long') }}</div>
                 </div>
 
                 <div class="info-item">
@@ -68,6 +68,7 @@
 <script setup>
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
+import { formatDate } from '../utils/format'
 
 const { currentUser, getInitials } = useAuth()
 const { t, currentLocale } = useI18n()
@@ -85,15 +86,6 @@ const close = () => {
   emit('close')
 }
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-  return date.toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 <style scoped>

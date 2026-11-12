@@ -153,7 +153,7 @@
                   <td class="transaction-id">{{ transaction.id.toString().padStart(3, '0') }}</td>
                   <td class="transaction-description">{{ transaction.description }}</td>
                   <td class="transaction-vendor">{{ transaction.vendor }}</td>
-                  <td class="transaction-date">{{ formatDateShort(transaction.date) }}</td>
+                  <td class="transaction-date">{{ formatDate(transaction.date, 'numeric') }}</td>
                   <td class="transaction-amount text-right">{{ currencySymbol }}{{ transaction.amount.toLocaleString() }}</td>
                 </tr>
               </tbody>
@@ -176,6 +176,8 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { formatDate } from '../utils/format'
+import { useTranslators } from '../composables/useTranslators'
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency'
 import CostDetailModal from '../components/CostDetailModal.vue'
 
@@ -186,6 +188,7 @@ export default {
   },
   setup() {
     const { t, currentCurrency } = useI18n()
+    const { translateCategory } = useTranslators()
     const loading = ref(true)
     const error = ref(null)
     const allMonthlySpending = ref([])
@@ -393,21 +396,6 @@ export default {
       return (value / maxValue) * 100
     }
 
-    const formatDate = (dateString) => {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-
-    const formatDateShort = (dateString) => {
-      const date = new Date(dateString)
-      const month = (date.getMonth() + 1).toString().padStart(2, '0')
-      const day = date.getDate().toString().padStart(2, '0')
-      const year = date.getFullYear().toString().slice(-2)
-      return `${month}/${day}/${year}`
-    }
-
     const translateMonth = (month) => {
       const monthMap = {
         'Jan': t('months.jan'),
@@ -426,30 +414,9 @@ export default {
       return monthMap[month] || month
     }
 
-    const translateCategory = (category) => {
-      // First try spending categories
-      const spendingCategoryMap = {
-        'Raw Materials': t('spendingCategories.rawMaterials'),
-        'Components': t('spendingCategories.components'),
-        'Equipment': t('spendingCategories.equipment'),
-        'Consumables': t('spendingCategories.consumables')
-      }
-
-      // Then try product categories
-      const productCategoryMap = {
-        'Circuit Boards': t('categories.circuitBoards'),
-        'Sensors': t('categories.sensors'),
-        'Actuators': t('categories.actuators'),
-        'Controllers': t('categories.controllers'),
-        'Power Supplies': t('categories.powerSupplies')
-      }
-
-      return spendingCategoryMap[category] || productCategoryMap[category] || category
-    }
-
     const handleTransactionClick = (transaction) => {
       console.log('Transaction clicked:', transaction)
-      alert(`Transaction Details:\n\nID: ${transaction.id}\nDescription: ${transaction.description}\nVendor: ${transaction.vendor}\nDate: ${formatDateShort(transaction.date)}\nAmount: $${transaction.amount.toLocaleString()}`)
+      alert(`Transaction Details:\n\nID: ${transaction.id}\nDescription: ${transaction.description}\nVendor: ${transaction.vendor}\nDate: ${formatDate(transaction.date, 'numeric')}\nAmount: $${transaction.amount.toLocaleString()}`)
     }
 
     const showCostDetail = (monthData) => {
@@ -478,7 +445,6 @@ export default {
       getBarHeight,
       getRevenueBarHeight,
       formatDate,
-      formatDateShort,
       translateMonth,
       translateCategory,
       handleTransactionClick,

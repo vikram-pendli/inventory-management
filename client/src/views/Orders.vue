@@ -131,11 +131,14 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { formatDate } from '../utils/format'
+import { useTranslators } from '../composables/useTranslators'
 
 export default {
   name: 'Orders',
   setup() {
     const { t, currentCurrency, translateProductName, translateCustomerName } = useI18n()
+    const { translateStatus } = useTranslators()
 
     const currencySymbol = computed(() => {
       return currentCurrency.value === 'JPY' ? '¥' : '$'
@@ -208,30 +211,10 @@ export default {
       return statusMap[status] || 'info'
     }
 
-    const formatDate = (dateString) => {
-      const { currentLocale } = useI18n()
-      const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-      const date = new Date(dateString)
-      if (isNaN(date.getTime())) return '-'
-      return date.toLocaleDateString(locale, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-
     const formatCost = (value) => {
       const num = Number(value)
       if (!Number.isFinite(num)) return '-'
       return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    }
-
-    // t() returns the key itself when missing; fall back to the raw status
-    const translateStatus = (status) => {
-      if (!status) return '-'
-      const key = `status.${String(status).toLowerCase()}`
-      const label = t(key)
-      return label && label !== key ? label : status
     }
 
     onMounted(() => {

@@ -63,7 +63,7 @@
 
               <div class="info-item">
                 <div class="info-label">Expected Date</div>
-                <div class="info-value">{{ formatDate(backlogItem.expected_date) }}</div>
+                <div class="info-value">{{ formatDate(backlogItem.expected_date, 'long') }}</div>
               </div>
 
               <div class="info-item">
@@ -87,6 +87,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { formatDate } from '../utils/format'
 
 const { translateProductName } = useI18n()
 
@@ -112,15 +113,6 @@ const close = () => {
   emit('close')
 }
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 <style scoped>

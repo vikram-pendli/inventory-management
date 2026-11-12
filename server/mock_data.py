@@ -38,5 +38,8 @@ purchase_orders = load_json_file('purchase_orders.json')
 # Restocking orders submitted at runtime; held in memory only, so cleared on restart
 restock_orders = []
 
+# User-created tasks (My Tasks modal); in memory only, cleared on restart
+tasks = []
+
 # All data is now loaded from JSON files in the data/ directory
 # This allows for easier maintenance and updates of the sample data

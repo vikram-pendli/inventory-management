@@ -180,7 +180,6 @@
                   <th>{{ t('dashboard.inventoryShortages.shortage') }}</th>
                   <th>{{ t('dashboard.inventoryShortages.daysDelayed') }}</th>
                   <th>{{ t('dashboard.inventoryShortages.priority') }}</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,22 +206,6 @@
                     <span :class="['badge', item.priority]">
                       {{ translatePriority(item.priority) }}
                     </span>
-                  </td>
-                  <td>
-                    <button
-                      v-if="!item.purchase_order_id"
-                      @click.stop="openPOModal(item)"
-                      class="po-button create"
-                    >
-                      Create PO
-                    </button>
-                    <button
-                      v-else
-                      @click.stop="viewPO(item)"
-                      class="po-button view"
-                    >
-                      View PO
-                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -285,14 +268,6 @@
       :backlog-item="selectedBacklogItem"
       @close="showBacklogModal = false"
     />
-
-    <PurchaseOrderModal
-      :is-open="showPOModal"
-      :backlog-item="selectedBacklogForPO"
-      :mode="poModalMode"
-      @close="showPOModal = false"
-      @po-created="handlePOCreated"
-    />
   </div>
 </template>
 
@@ -302,6 +277,8 @@ import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import { formatCurrency } from '../utils/currency'
+import { formatDate } from '../utils/format'
+import { useTranslators } from '../composables/useTranslators'
 import ProductDetailModal from '../components/ProductDetailModal.vue'
 import BacklogDetailModal from '../components/BacklogDetailModal.vue'
 
@@ -313,6 +290,7 @@ export default {
   },
   setup() {
     const { t, currentCurrency, translateProductName, translateWarehouse } = useI18n()
+    const { translateCategory, translatePriority } = useTranslators()
     const loading = ref(true)
     const error = ref(null)
     const summary = ref({})
@@ -324,9 +302,6 @@ export default {
     const selectedProduct = ref(null)
     const showBacklogModal = ref(false)
     const selectedBacklogItem = ref(null)
-    const showPOModal = ref(false)
-    const selectedBacklogForPO = ref(null)
-    const poModalMode = ref('create')
 
     // Use shared filters
     const {
@@ -601,43 +576,12 @@ export default {
       return 'danger'
     }
 
-    const translateCategory = (category) => {
-      const categoryMap = {
-        'Circuit Boards': t('categories.circuitBoards'),
-        'Sensors': t('categories.sensors'),
-        'Actuators': t('categories.actuators'),
-        'Controllers': t('categories.controllers'),
-        'Power Supplies': t('categories.powerSupplies')
-      }
-      return categoryMap[category] || category
-    }
-
     const translateStockLevel = (stockLevel) => {
       const stockMap = {
         'In Stock': t('status.inStock'),
         'Low Stock': t('status.lowStock')
       }
       return stockMap[stockLevel] || stockLevel
-    }
-
-    const translatePriority = (priority) => {
-      const priorityMap = {
-        'high': t('priority.high'),
-        'medium': t('priority.medium'),
-        'low': t('priority.low'),
-        'High': t('priority.high'),
-        'Medium': t('priority.medium'),
-        'Low': t('priority.low')
-      }
-      return priorityMap[priority] || priority
-    }
-
-    const formatDate = (dateString) => {
-      if (!dateString) return '-'
-      const { currentLocale } = useI18n()
-      const locale = currentLocale.value === 'ja' ? 'ja-JP' : 'en-US'
-      const date = new Date(dateString)
-      return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })
     }
 
     const showProductDetail = (product) => {
@@ -648,28 +592,6 @@ export default {
     const showBacklogDetail = (item) => {
       selectedBacklogItem.value = item
       showBacklogModal.value = true
-    }
-
-    const openPOModal = (item) => {
-      selectedBacklogForPO.value = item
-      poModalMode.value = 'create'
-      showPOModal.value = true
-    }
-
-    const viewPO = (item) => {
-      selectedBacklogForPO.value = item
-      poModalMode.value = 'view'
-      showPOModal.value = true
-    }
-
-    const handlePOCreated = (poData) => {
-      // Update the backlog item with the new PO ID
-      const item = allBacklogItems.value.find(b => b.id === poData.backlog_item_id)
-      if (item) {
-        item.purchase_order_id = poData.id
-        item.purchase_order = poData
-      }
-      showPOModal.value = false
     }
 
     // Watch for filter changes and reload data
@@ -714,13 +636,7 @@ export default {
       formatCurrency,
       Math,
       translateProductName,
-      translateWarehouse,
-      showPOModal,
-      selectedBacklogForPO,
-      poModalMode,
-      openPOModal,
-      viewPO,
-      handlePOCreated
+      translateWarehouse
     }
   }
 }
@@ -1234,38 +1150,5 @@ export default {
 .task-delete-btn:hover {
   background: #dc2626;
   transform: scale(1.1);
-}
-
-.po-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.813rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.po-button.create {
-  background: #3b82f6;
-  color: white;
-}
-
-.po-button.create:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.po-button.view {
-  background: #64748b;
-  color: white;
-}
-
-.po-button.view:hover {
-  background: #475569;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
 }
 </style>
